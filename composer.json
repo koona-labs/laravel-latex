@@ -1,0 +1,43 @@
+{
+    "name": "abiturma/laravel-latex",
+    "description": "A LaTeX compiler wrapper for Laravel",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Abiturma\\LaravelLatex\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Abiturma\\LaravelLatex\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Aaron Kunert",
+            "email": "aaron.kunert@abiturma.de"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "illuminate/config": "^6.0|^7.0",
+        "illuminate/support": "^6.0|^7.0",
+        "illuminate/view": "^6.0|^7.0",
+        "illuminate/filesystem": "^6.0|^7.0",
+        "titasgailius/terminal": "^0.3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^5.2",
+        "phpunit/phpunit": "^9.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Abiturma\\LaravelLatex\\LatexServiceProvider"
+            ],
+            "aliases": {
+                "Latex": "Abiturma\\LaravelLatex\\Facades\\Latex"
+            }
+        }
+    }
+}

@@ -1,0 +1,2 @@
+Variable:
+@latex($variable)
