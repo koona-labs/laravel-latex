@@ -30,7 +30,7 @@ class GcCommandTest extends TestCase
     public function it_prompts_the_user_before_output_files_are_deleted()
     {
         $this->artisan('latex:gc --output')
-            ->expectsConfirmation('The output directory will be deleted. Are you sure?','no')
+            ->expectsQuestion('The output directory will be deleted. Are you sure?','no')
             ->assertExitCode(0);
     }
     
