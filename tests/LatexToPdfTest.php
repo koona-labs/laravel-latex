@@ -9,7 +9,7 @@ use Abiturma\LaravelLatex\LatexToPdf;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 
-class LatexTest extends TestCase
+class LatexToPdfTest extends TestCase
 {
     /** @test */
     public function it_passes_view_and_data_to_the_latex_directory()
