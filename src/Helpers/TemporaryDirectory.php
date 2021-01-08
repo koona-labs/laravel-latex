@@ -29,6 +29,8 @@ class TemporaryDirectory
     protected $data = [];
 
     protected $includeViewFolder = false;
+    
+    protected $assets = []; 
     /**
      * @var Filesystem
      */
@@ -60,6 +62,7 @@ class TemporaryDirectory
         return $this;
     }
 
+
     /**
      * provides data for the view
      * 
@@ -90,6 +93,17 @@ class TemporaryDirectory
     public function includeViewFolder()
     {
         $this->includeViewFolder = true;
+        return $this;
+    }
+
+
+    /**
+     * @param array $assets
+     * @return $this
+     */
+    public function withAssets(array $assets = [])
+    {
+        $this->assets = $assets;
         return $this;
     }
 
@@ -154,15 +168,30 @@ class TemporaryDirectory
 
     protected function handleAssets()
     {
-        if (!$this->includeViewFolder) {
-            return;
+        if ($this->includeViewFolder) {
+            $this->copyViewFolder();
         }
-
-        $this->copyAssets();
+        
+        foreach($this->assets as $asset) {
+            $this->copyAsset($asset); 
+        }
+        
         $this->compileAssetsViews();
     }
 
-    protected function copyAssets()
+    protected function copyAsset($asset)
+    {
+        if($this->filesystem->isDirectory($asset)) {
+            return $this->filesystem->copyDirectory($asset,$this->path); 
+        }
+        
+        if($this->filesystem->exists($asset)) {
+           $name = $this->filesystem->basename($asset); 
+           $this->filesystem->copy($asset, $this->path . '/' . $name);    
+        }
+    }
+
+    protected function copyViewFolder()
     {
         $this->filesystem->copyDirectory(dirname(app('view.finder')->find($this->view)), $this->path);
     }

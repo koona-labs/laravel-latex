@@ -24,7 +24,7 @@ class TemporaryDirectoryTest extends TestCase
     }
 
     /** @test */
-    public function it_copies_assets_if_necessary()
+    public function it_copies_the_viewfolder_if_advised_to()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'my_test'])->includeViewFolder()->create()->getPath();
         $files = collect(File::allFiles($dir))->map->getFilename();
@@ -32,6 +32,31 @@ class TemporaryDirectoryTest extends TestCase
         $this->assertTrue($files->contains('some_image.jpg')); 
         
     }
+    
+    /** @test */
+    public function it_copies_specified_asset_files()
+    {
+        $dir = $this->make()->view('TemporaryDirectory.entry')
+            ->with(['variable' => 'my_test'])
+            ->withAssets([__DIR__ .'/../resources/views/TemporaryDirectory/asset.sty.blade.php'])
+            ->create()
+            ->getPath();
+        $files = collect(File::allFiles($dir))->map->getFilename();
+        $this->assertTrue($files->contains('asset.sty'));
+    }
+    
+    /** @test */
+    public function it_copies_specified_asset_directories()
+    {
+        $dir = $this->make()->view('TemporaryDirectory.entry')
+            ->with(['variable' => 'my_test'])
+            ->withAssets([__DIR__ .'/../resources/views/TemporaryDirectory'])
+            ->create()
+            ->getPath();
+        $files = collect(File::allFiles($dir))->map->getFilename();
+        $this->assertTrue($files->contains('asset.sty'));
+    }
+    
     
     /** @test */
     public function it_compiles_all_blade_files_in_the_directory_if_necessary()
@@ -43,6 +68,22 @@ class TemporaryDirectoryTest extends TestCase
         $this->assertNotNull($asset);
         $this->assertStringContainsString('myAssetTest',File::get($asset));
     }
+    
+    /** @test */
+    public function it_compiles_additional_files_too()
+    {
+        $dir = $this->make()->view('TemporaryDirectory.entry')
+            ->with(['variable' => 'anotherAssetTest'])
+            ->withAssets([__DIR__ .'/../resources/views/TemporaryDirectory/asset.sty.blade.php'])
+            ->create()
+            ->getPath();
+        $asset = collect(File::allFiles($dir))->first(function($file) use ($dir) {
+            return $file->getFilename() === 'asset.sty';
+        });
+        $this->assertNotNull($asset);
+        $this->assertStringContainsString('anotherAssetTest',File::get($asset));
+    }
+    
     
 
 
