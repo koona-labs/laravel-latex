@@ -28,8 +28,10 @@ class LatexToPdf
     protected $view = '';
 
     protected $data = [];
+    
+    protected $assets = []; 
 
-    protected $withAssets = false;
+    protected $includeViewFolder = false;
 
     protected $runs = 1;
     /**
@@ -76,13 +78,25 @@ class LatexToPdf
     }
 
     /**
+     * Add assets to the compiler
+     * 
+     * @param array $assets
+     * @return $this
+     */
+    public function assets(array $assets = [])
+    {
+        $this->assets = $assets; 
+        return $this; 
+    }
+
+    /**
      * specify if the ambient folder of the view should be copied to the compilation directory
      * 
      * @return $this
      */
-    public function withAssets()
+    public function includeViewFolder()
     {
-        $this->withAssets = true;
+        $this->includeViewFolder = true;
         return $this;
     }
 
@@ -116,13 +130,23 @@ class LatexToPdf
         return $result; 
     }
 
+
+    /**
+     * @param Texable $texable
+     * @return string
+     */
+    public function make(Texable $texable)
+    {
+        return $texable->make($this);             
+    }
+
     /**
      * @return TemporaryDirectory
      */
     protected function buildTemporaryDirectory()
     {
         return tap($this->temporaryDirectory, function ($dir) {
-            if ($this->withAssets) {
+            if ($this->includeViewFolder) {
                 $dir->includeViewFolder();
             }
         })

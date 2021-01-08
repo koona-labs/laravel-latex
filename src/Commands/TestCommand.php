@@ -53,7 +53,7 @@ class TestCommand extends Command
             $this->error('Could not generate pdf file from withoutAssets.blade.php'); 
         }
 
-        $path2 = Latex::view('test.withAssets')->with(['variable' => 'test'])->withAssets()->get();
+        $path2 = Latex::view('test.withAssets')->with(['variable' => 'test'])->includeViewFolder()->get();
         if($disk->exists($path2)) {
             $this->info('A pdf file using assets was created at '. $disk->path($path2));
         }
