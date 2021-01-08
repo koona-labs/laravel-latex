@@ -5,6 +5,7 @@ namespace Abiturma\LaravelLatex;
 
 use Abiturma\LaravelLatex\Commands\GcCommand;
 use Abiturma\LaravelLatex\Commands\TestCommand;
+use Abiturma\LaravelLatex\Commands\TexableMakeCommand;
 use Abiturma\LaravelLatex\Helpers\LatexEscaper;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -33,7 +34,8 @@ class LatexServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestCommand::class,
-                GcCommand::class
+                GcCommand::class,
+                TexableMakeCommand::class
             ]);
         }
         

@@ -20,10 +20,11 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "illuminate/config": "^6.0|^7.0",
-        "illuminate/support": "^6.0|^7.0",
-        "illuminate/view": "^6.0|^7.0",
-        "illuminate/filesystem": "^6.0|^7.0",
+        "illuminate/config": "^6.0|^7.0|^8.0",
+        "illuminate/support": "^6.0|^7.0|^8.0",
+        "illuminate/view": "^6.0|^7.0|^8.0",
+        "illuminate/filesystem": "^6.0|^7.0|^8.0",
+        "illuminate/console": "^6.0|^7.0|^8.0",
         "titasgailius/terminal": "^0.3.0"
     },
     "require-dev": {

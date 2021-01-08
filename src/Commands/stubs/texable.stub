@@ -1,0 +1,31 @@
+<?php
+
+namespace DummyNamespace;
+
+use Abiturma\LaravelLatex\Texable;
+
+class DummyClass extends Texable
+{
+
+    /**
+     * Create a new texable instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Build the document.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->view('view.name');
+    }
+    
+    
+}

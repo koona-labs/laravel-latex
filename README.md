@@ -83,9 +83,18 @@ The number of runs will be automatically truncated to an integer between 1 and 1
 
 ### Asset Files
 
-Once you use graphics or custom sty-files in your template your compiler needs more than one file. To handle this situation you can call `->withAssets()` on the compiler. 
+Once you use graphics or custom sty-files in your template your compiler needs more than one file. To handle this situation you can call 
+```
+->assets([
+    'path/to/one/asset',
+    'path/to/another/asset
+])
+``` 
+on the compiler. This will copy all specified files to the compilation directory. 
 
-This will copy all files of the ambient directory of the view in the compilation directory. All blade views in the ambient directory are compiled to the according tex files using the variables passed by `->with($data)`. 
+Very often you have the case, that you want to include all files in the directory of the view as assets. In this case you can simply call `->includeViewDirectory()` on the compiler. This will copy all files of the ambient directory of the view in the compilation directory.
+
+ After copying the asset files to the compilation directory all blade views are compiled to the according tex files using the variables passed by `->with($data)`. 
 
 #### Example 
 
@@ -103,7 +112,7 @@ the command
 ```
 Latex::view('myDocument.main)
     ->with($data)
-    ->withAssets()
+    ->includeViewDirectory()
     ->get()
 ```
 will produce a (temporary) compilation directory of the form 
@@ -118,9 +127,47 @@ temp
 ```
 where `package.sty` is the compiled version of `package.sty.blade.php` using `$data`. 
 
+
+### Using Texables
+Instead of calling the Compiler with all the necessary parameters you can also pass a `Texable` class which act similarly like [Laravel Mailables](https://laravel.com/docs/master/mail#generating-mailables). 
+
+For creating a mailable run the command `latex:make MyTexable` to create a stub in your view directory. 
+
+To compile a Texable run `make::latex(new MyTexable())`. Texables have basically the same methods as the compiler class. Before the latex compiler run, the `->build()` method is run on the Texable. Moreover, all public variables on the Texable are available as data for the given view. 
+
+#### Example 
+
+Say the class `MyTexable` is given by
+
+```
+use Abiturma\LaravelLatex\Texable
+
+class MyTexable extends Texable
+{
+    public $message;     
+
+    __construct($message) {
+        $this->message = $message;        
+    }
+
+    public function build() {
+        return $this->view('someview')
+    }
+    
+}
+
+```
+then running `Latex::make(MyTexable("someString")` is equivalent to 
+```
+Latex::view('someview')->with(["message" => "someString"])->get()
+```
+
+
+
 ### Debugging
 
 If the compilation fails a `CompilationFailedException` is raised. By default the exception message contains the truncated compilation log. If `debug` is set to `true` the exception message contains the full compilation log. 
+
 
 ### Commands 
 
