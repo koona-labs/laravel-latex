@@ -4,7 +4,7 @@ This package compiles Blade views containing LaTeX source code to a pdf file
 
 ## Requirements
 
-You need an installation of a latex compiler (e.g. texlive) on your server. This package is designed for the use with Laravel 6 or newer. 
+You need an installation of a latex compiler (e.g. texlive) on your server. This package is designed for the use with Laravel 8 or newer. 
 
 
 ## Installation and Setup
