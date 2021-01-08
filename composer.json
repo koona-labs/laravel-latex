@@ -2,6 +2,7 @@
     "name": "abiturma/laravel-latex",
     "description": "A LaTeX compiler wrapper for Laravel",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Abiturma\\LaravelLatex\\": "src/"
