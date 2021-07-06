@@ -152,6 +152,7 @@ class LatexToPdf
         })
             ->view($this->view)
             ->with($this->data)
+            ->withAssets($this->assets)
             ->create(); 
     }
 

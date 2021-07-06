@@ -16,9 +16,12 @@ class LatexToPdfTest extends TestCase
     {
         Storage::fake(); 
         
+        $assets = ['path/to/asset']; 
+        
         $dir = $this->createMock(TemporaryDirectory::class); 
         $dir->expects($this->once())->method('view')->with($this->equalTo('someview'))->willReturn($this->returnSelf()); 
         $dir->expects($this->once())->method('with')->with($this->equalTo(['variable' => 'test']))->willReturn($this->returnSelf()); 
+        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assets))->willReturn($this->returnSelf()); 
         $dir->method('create')->willReturn($this->returnSelf()); 
         $dir->method('getEntryFile')->willReturn(new File(__FILE__));
         
@@ -26,7 +29,7 @@ class LatexToPdfTest extends TestCase
         $compiler->method('compile')->willReturn(new File(__FILE__)); 
         
         $latex = new LatexToPdf($this->app->make('config'),$compiler, $dir);  
-        $latex->view('someview')->with(['variable' => 'test'])->get();
+        $latex->view('someview')->with(['variable' => 'test'])->assets($assets)->get();
         
     }
     
@@ -38,6 +41,7 @@ class LatexToPdfTest extends TestCase
         $dir = $this->createMock(TemporaryDirectory::class);
         $dir->method('view')->willReturn($this->returnSelf());
         $dir->method('with')->willReturn($this->returnSelf());
+        $dir->method('withAssets')->willReturn($this->returnSelf());
         $dir->method('create')->willReturn($this->returnSelf());
         $dir->method('getEntryFile')->willReturn(new File(__FILE__));
         $compiler = $this->createMock(LatexCompiler::class);
