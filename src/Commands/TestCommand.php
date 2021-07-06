@@ -5,6 +5,7 @@ namespace Abiturma\LaravelLatex\Commands;
 use Abiturma\LaravelLatex\Facades\Latex;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\Factory;
 
 /**
  * Class TestCommand
@@ -19,6 +20,12 @@ class TestCommand extends Command
      */
     protected $signature = 'latex:test';
 
+
+    /**
+     * @var Factory
+     */
+    protected $view;
+
     /**
      * The console command description.
      *
@@ -31,9 +38,10 @@ class TestCommand extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Factory $view)
     {
         parent::__construct();
+        $this->view = $view;
     }
 
     /**
@@ -43,9 +51,13 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        config()->set('view.paths',[__DIR__.'/../resources/views']);
-        $path1 = Latex::view('test.withoutAssets')->with(['variable' => 'test'])->get();
+        //both adaption are necessary since the view finder is instantiated two times
+        $location = __DIR__.'/../resources/views';
+        config()->set('view.paths',[$location]);
+        $this->view->addLocation($location);
+        
         $disk = Storage::disk(config('latex.output.disk')); 
+        $path1 = Latex::view('test.withoutAssets')->with(['variable' => 'test'])->get();
         if($disk->exists($path1)) {
             $this->info('Simple pdf file created at '. $disk->path($path1)); 
         }
