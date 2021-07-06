@@ -11,7 +11,7 @@ class TexableMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:latex';
+    protected $name = 'latex:make';
 
     /**
      * The console command description.
