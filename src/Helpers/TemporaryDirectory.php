@@ -150,14 +150,16 @@ class TemporaryDirectory
     protected function createDirectory()
     {
         $this->path = $this->config['temp_directory'] . '/' . uniqid();
-        $segments = explode('/', $this->path);
-        $dir = '';
-        foreach ($segments as $newSegment) {
-            $dir .= "/$newSegment";
-            if (!$this->filesystem->exists($dir)) {
-                $this->filesystem->makeDirectory($dir);
-            }
+        $this->createDirectoryRecursively($this->path); 
+    }
+
+    protected function createDirectoryRecursively($path)
+    {
+        $dir = dirname($path); 
+        if(!$this->filesystem->exists($dir)) {
+            $this->createDirectoryRecursively($dir); 
         }
+        $this->filesystem->makeDirectory($path); 
     }
 
     protected function buildEntryFile()

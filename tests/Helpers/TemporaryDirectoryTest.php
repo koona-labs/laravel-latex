@@ -22,6 +22,16 @@ class TemporaryDirectoryTest extends TestCase
         $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'my_test'])->create();
         $this->assertInstanceOf('Illuminate\Http\File', $dir->getEntryFile());
     }
+    
+    /** @test */
+    public function it_creates_a_nested_temporary_directory()
+    {
+        $temp = config('latex.temp_directory'); 
+        $this->app->config->set('latex.temp_directory', $temp . '/' . uniqid() .'/'. uniqid() ); 
+        $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'my_test'])->create(); 
+        $this->assertInstanceOf('Illuminate\Http\File',$dir->getEntryFile()); 
+    }
+    
 
     /** @test */
     public function it_copies_the_viewfolder_if_advised_to()
