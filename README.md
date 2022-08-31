@@ -92,7 +92,7 @@ Once you use graphics or custom sty-files in your template your compiler needs m
 ``` 
 on the compiler. This will copy all specified files to the compilation directory. 
 
-Very often you have the case, that you want to include all files in the directory of the view as assets. In this case you can simply call `->includeViewDirectory()` on the compiler. This will copy all files of the ambient directory of the view in the compilation directory.
+Very often you have the case, that you want to include all files in the directory of the view as assets. In this case you can simply call `->includeViewFolder()` on the compiler. This will copy all files of the ambient directory of the view in the compilation directory.
 
  After copying the asset files to the compilation directory all blade views are compiled to the according tex files using the variables passed by `->with($data)`. 
 
@@ -112,7 +112,7 @@ the command
 ```
 Latex::view('myDocument.main)
     ->with($data)
-    ->includeViewDirectory()
+    ->includeViewFolder()
     ->get()
 ```
 will produce a (temporary) compilation directory of the form 
