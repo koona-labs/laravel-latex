@@ -13,7 +13,7 @@ class BladeToLatexTest extends TestCase
     {
         $variable = "This is a test"; 
         $actual = $this->make()->toString('BladeToLatex.entry',compact('variable')); 
-        $this->assertEquals(trim("Variable:\n$variable"),trim($actual)); 
+        $this->assertEquals(trim("Variable: $variable"),trim($actual)); 
     }
     
     
@@ -22,7 +22,7 @@ class BladeToLatexTest extends TestCase
     {
         $variable = "This is a test";
         $actual = $this->make()->toStringFromPath(__DIR__ . '/../resources/views/BladeToLatex/entry.blade.php',compact('variable'));
-        $this->assertEquals(trim("Variable:\n$variable"),trim($actual));
+        $this->assertEquals(trim("Variable: $variable"),trim($actual));
     }
     
     

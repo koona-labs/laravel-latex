@@ -1,2 +1,1 @@
-Variable:
-@latex($variable)
+Variable: @latex($variable)
