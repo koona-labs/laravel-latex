@@ -3,6 +3,7 @@
 namespace Abiturma\LaravelLatex\Tests;
 
 
+use Abiturma\LaravelLatex\LatexToPdf;
 use Abiturma\LaravelLatex\Texable;
 
 class TexableTest extends TestCase
@@ -11,61 +12,134 @@ class TexableTest extends TestCase
     public function it_stores_the_view()
     {
         $texable = (new Texable());
-        $this->assertInstanceOf(Texable::class,$texable->view('my_test_view'));
-        $this->assertEquals('my_test_view',$texable->view); 
+        $this->assertInstanceOf(Texable::class, $texable->view('my_test_view'));
+        $this->assertEquals('my_test_view', $texable->view);
     }
-    
+
     /** @test */
     public function it_stores_the_number_of_runs()
     {
         $texable = (new Texable());
-        $this->assertInstanceOf(Texable::class,$texable->runs(5));
-        $this->assertEquals(5,$texable->runs);
+        $this->assertInstanceOf(Texable::class, $texable->runs(5));
+        $this->assertEquals(5, $texable->runs);
     }
 
     /** @test */
     public function it_stores_data()
     {
         $texable = (new Texable());
-        $data = ['some' => 'data']; 
-        $this->assertInstanceOf(Texable::class,$texable->with($data));
-        $this->assertEquals($data,$texable->viewData);
+        $data = ['some' => 'data'];
+        $this->assertInstanceOf(Texable::class, $texable->with($data));
+        $this->assertEquals($data, $texable->viewData);
     }
-    
+
+
     /** @test */
     public function it_stores_assets()
     {
         $texable = (new Texable());
-        $assets = ['some','assets'];
-        $this->assertInstanceOf(Texable::class,$texable->assets($assets));
-        $this->assertEquals($assets,$texable->assets);
+        $assets = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class, $texable->assets($assets));
+        $this->assertEquals($assets, $texable->assets);
     }
     
+    
+    /** @test */
+    public function it_stores_absolute_asset_paths()
+    {
+        $texable = (new Texable());
+        $assets = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class, $texable->assets($assets, true));
+        $this->assertEquals($assets, $texable->absoluteAssetPaths);
+    }
+
+
     /** @test */
     public function it_adds_a_single_asset()
     {
-        $texable = (new Texable());
-        $texable->assets(['some','assets']);
-        
-        $newAsset = 'some/path';
-        $this->assertInstanceOf(Texable::class,$texable->addAsset($newAsset));
-        $this->assertEquals(['some','assets','some/path'],$texable->assets); 
+        $texable = new Texable();
+        $texable->assets = ['some', 'assets']; 
+        $this->assertInstanceOf(Texable::class,$texable->addAsset('new_asset'));
+        $this->assertEquals(['some','assets','new_asset'],$texable->assets);
     }
-    
+
     /** @test */
     public function it_adds_multiple_assets()
     {
-        $texable = (new Texable());
-        $texable->assets(['some','assets']);
-
-        $newAssets = ['some/path1','some/path2'];
-        $this->assertInstanceOf(Texable::class,$texable->addAsset($newAssets));
-        $this->assertEquals(['some','assets','some/path1','some/path2'],$texable->assets);
+        $texable = new Texable();
+        $texable->assets = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->addAsset(['asset_1','asset_2']));
+        $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->assets);
+    }
+    
+    
+    /** @test */
+    public function it_adds_the_absolute_path_of_a_single_asset()
+    {
+        $texable = new Texable();
+        $texable->absoluteAssetPaths = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->addAsset('new_asset', true));
+        $this->assertEquals(['some','assets','new_asset'],$texable->absoluteAssetPaths);
+        
+    }
+    
+    /** @test */
+    public function it_adds_the_absolute_path_of_multiple_assets()
+    {
+        $texable = new Texable();
+        $texable->absoluteAssetPaths = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->addAsset(['asset_1','asset_2'], true));
+        $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->absoluteAssetPaths);
+    }
+    
+    /** @test */
+    public function it_exludes_a_single_asset()
+    {
+        $texable = new Texable();
+        $texable->excludedAssets = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->excludeAsset('new_asset'));
+        $this->assertEquals(['some','assets','new_asset'],$texable->excludedAssets);
+    }
+    
+    /** @test */
+    public function it_excludes_multiple_assets()
+    {
+        $texable = new Texable();
+        $texable->excludedAssets = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->excludeAsset(['asset_1','asset_2']));
+        $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->excludedAssets);
+    }
+    
+    /** @test */
+    public function it_excludes_the_absolute_paths_of_a_single_asset()
+    {
+        $texable = new Texable();
+        $texable->excludedAbsoluteAssetPaths = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->excludeAsset('new_asset', true));
+        $this->assertEquals(['some','assets','new_asset'],$texable->excludedAbsoluteAssetPaths);
+    }
+    
+    /** @test */
+    public function it_excludes_the_absolute_path_of_multiple_assets()
+    {
+        $texable = new Texable();
+        $texable->excludedAbsoluteAssetPaths = ['some', 'assets'];
+        $this->assertInstanceOf(Texable::class,$texable->excludeAsset(['asset_1','asset_2'], true));
+        $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->excludedAbsoluteAssetPaths);
+    }
+    
+    /** @test */
+    public function it_allows_to_include_the_view_folder()
+    {
+       $texable = (new Texable())->includeViewFolder(); 
+       $this->assertContains('*',$texable->assets); 
     }
     
     
     
     
-        
     
+    
+
+
 }

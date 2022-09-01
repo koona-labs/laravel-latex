@@ -75,10 +75,10 @@ class TestCommand extends Command
 
 
         $path3 = Latex::view('test.withAssets')->with(['variable' => 'test'])
-            ->assets([__DIR__.'/../resources/views/test/test.jpg'])
+            ->assets(['test.jpg'])
             ->get();
         if($disk->exists($path3)) {
-            $this->info('A pdf file using assets-directory was created at '. $disk->path($path2));
+            $this->info('A pdf file using single assets was created at '. $disk->path($path3));
         }
         else {
             $this->error('Could not generate pdf file from withAssets.blade.php');

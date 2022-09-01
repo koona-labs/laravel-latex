@@ -3,6 +3,8 @@
 namespace Abiturma\LaravelLatex;
 
 
+use Abiturma\LaravelLatex\Helpers\AssetBuilder;
+use Illuminate\Support\Arr;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -25,13 +27,37 @@ class Texable
 
     /**
      * @var array
+     * Array of asset paths, relative to view entry
+     * Glob patterns are supported
      */
     public $assets = [];
 
     /**
      * @var array
      */
+    public $absoluteAssetPaths = [];
+
+    /**
+     * @var array
+     */
     public $viewData = [];
+
+
+    /**
+     * @var array
+     * Exclusion takes precedence over asset abd  absoluteAssetPaths property
+     */
+    public $excludedAbsoluteAssetPaths = [];
+
+
+    /**
+     * @var array
+     * Array of asset paths, relative to view entry that should be removed from the asset list
+     * Glob patterns are supported
+     * Exclusion takes precedence over asset abd  absoluteAssetPaths property
+     */
+    public $excludedAssets = [];
+
 
     /**
      * @param $runs
@@ -39,8 +65,8 @@ class Texable
      */
     public function runs($runs)
     {
-        $this->runs = $runs; 
-        return $this; 
+        $this->runs = $runs;
+        return $this;
     }
 
     /**
@@ -49,8 +75,8 @@ class Texable
      */
     public function view($view)
     {
-        $this->view = $view; 
-        return $this; 
+        $this->view = $view;
+        return $this;
     }
 
 
@@ -61,32 +87,59 @@ class Texable
     public function with(array $with = [])
     {
         $this->viewData = $with;
-        return $this; 
+        return $this;
     }
 
     /**
-     * @param array $assets
+     * @param array|string $assets
+     * @param bool $absolutePath
      * @return $this
      */
-    public function assets(array $assets = [])
+    public function assets(array|string $assets = [], bool $absolutePath = false)
     {
+        $assets = Arr::wrap($assets);
+        if ($absolutePath) {
+            $this->absoluteAssetPaths = $assets;
+            return $this;
+        }
         $this->assets = $assets;
-        return $this; 
+        return $this;
     }
+
+
+    /**
+     * @param array|string $asset
+     * @param bool $absolutePath
+     * @return $this
+     */
+    public function addAsset(array|string $asset, $absolutePath = false)
+    {
+        $asset = Arr::wrap($asset);
+        if ($absolutePath) {
+            $this->absoluteAssetPaths = array_merge($this->absoluteAssetPaths, $asset);
+            return $this;
+        }
+
+        $this->assets = array_merge($this->assets, $asset);
+        return $this;
+    }
+
 
     /**
      * @param $asset
+     * @param $absolutePath
      * @return $this
      */
-    public function addAsset($asset)
+    public function excludeAsset($asset, $absolutePath = false)
     {
-        if(is_array($asset)) {
-            $this->assets = array_merge($this->assets,$asset);
-            return $this; 
-        } 
-        
-        array_push($this->assets,$asset);     
-        return $this; 
+        $asset = Arr::wrap($asset);
+        if ($absolutePath) {
+            $this->excludedAbsoluteAssetPaths = array_merge($this->excludedAbsoluteAssetPaths, $asset);
+            return $this;
+        }
+
+        $this->excludedAssets = array_merge($this->excludedAssets, $asset);
+        return $this;
     }
 
     /**
@@ -111,7 +164,15 @@ class Texable
      */
     public function build()
     {
-        return $this; 
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function includeViewFolder()
+    {
+        return $this->addAsset('*');
     }
 
     /**
@@ -122,16 +183,24 @@ class Texable
      */
     public function make(LatexToPdf $compiler)
     {
-        $this->build(); 
-        
+        $this->build();
+
+        $assets = (new AssetBuilder())
+            ->assets($this->assets)
+            ->absoluteAssetPaths($this->absoluteAssetPaths)
+            ->excludedAssets($this->excludedAssets)
+            ->excludedAbsoluteAssetsPaths($this->excludedAbsoluteAssetPaths)
+            ->view($this->view); 
+
         return $compiler
             ->runs($this->runs)
-            ->assets($this->assets)
+            ->assets($assets->get(), true)
             ->view($this->view)
             ->with($this->buildViewData())
-            ->get(); 
+            ->get();
     }
-    
-    
-    
+
+
+
+
 }

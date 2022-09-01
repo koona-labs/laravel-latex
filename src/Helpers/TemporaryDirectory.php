@@ -31,6 +31,7 @@ class TemporaryDirectory
     protected $includeViewFolder = false;
     
     protected $assets = []; 
+    
     /**
      * @var Filesystem
      */

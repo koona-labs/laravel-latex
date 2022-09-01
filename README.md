@@ -86,11 +86,18 @@ The number of runs will be automatically truncated to an integer between 1 and 1
 Once you use graphics or custom sty-files in your template your compiler needs more than one file. To handle this situation you can call 
 ```
 ->assets([
-    'path/to/one/asset',
-    'path/to/another/asset
+    './relative/path/to/one/asset',
+    './relative/path/to/another/asset
 ])
 ``` 
-on the compiler. This will copy all specified files to the compilation directory. 
+on the compiler. This will copy all specified files to the compilation directory. The path is relative to the directory of the view. If absolute paths are needed, set the `absolutePath` flag to `true`: 
+```
+->assets([
+    '/absolute/path/to/asset',
+    '/absolute/path/to/another/asset
+],
+true)
+``` 
 
 Very often you have the case, that you want to include all files in the directory of the view as assets. In this case you can simply call `->includeViewFolder()` on the compiler. This will copy all files of the ambient directory of the view in the compilation directory.
 
@@ -162,6 +169,8 @@ then running `Latex::make(MyTexable("someString")` is equivalent to
 Latex::view('someview')->with(["message" => "someString"])->get()
 ```
 
+#### Assets
+Besides the `->asset()` method, Texables have more options to handle assets. It is possible to add assets using `->addAsset()`. These methods not only understand absolute and relative paths via the `absolutePath` flag as second argument, they also parse file patterns as glob. So it also possible to add assets like this `->addAsset('*.jpg')`. To exclude file patterns use the method `->excludeAssets($assets)` 
 
 
 ### Debugging
@@ -180,6 +189,10 @@ The command `latex:test` runs the compiler on two test files. If the compilation
 The command `latex:gc` removes all temporary directories and files which were not garbage collected during the compilation process. This might happen, if the process failes before the automatic clean-up process of the compiler kicked in. 
 
 If you add the flag `--output` also the given output directory is cleaned. This makes sense if you are used to move the output files after generation to someplace else anyways. 
+
+## Upgrade/Breaking changes
+
+As of version 1.2.0, the `->assets()` method of the LatexToPdf and Texable class now expect paths relative to the view folder instead of absolute paths. For downward compatibility use the `absolutePath` flag as second argument, e.g. `->assets($someLegacyPath, true)`.   
 
 
 ## Acknowledgements

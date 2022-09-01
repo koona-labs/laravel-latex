@@ -8,6 +8,7 @@ use Abiturma\LaravelLatex\Helpers\TemporaryDirectory;
 use Illuminate\Config\Repository;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Class LatexToPdf
@@ -30,7 +31,9 @@ class LatexToPdf
     protected $data = [];
     
     protected $assets = []; 
-
+    
+    protected $absoluteAssetPaths = []; 
+    
     protected $includeViewFolder = false;
 
     protected $runs = 1;
@@ -83,8 +86,12 @@ class LatexToPdf
      * @param array $assets
      * @return $this
      */
-    public function assets(array $assets = [])
+    public function assets(array $assets = [], bool $absolutePath = false)
     {
+        if($absolutePath) {
+            $this->absoluteAssetPaths = $assets; 
+            return $this; 
+        }
         $this->assets = $assets; 
         return $this; 
     }
@@ -152,8 +159,32 @@ class LatexToPdf
         })
             ->view($this->view)
             ->with($this->data)
-            ->withAssets($this->assets)
+            ->withAssets($this->buildAssets())
             ->create(); 
+    }
+
+    /**
+     * @return array|string[]
+     * @throws \Exception
+     */
+    protected function buildAssets()
+    {
+        if(!$this->assets) {
+            return $this->absoluteAssetPaths; 
+        }
+        
+        $dirname = dirname(app('view.finder')->find($this->view)); 
+        
+        if(!$dirname) {
+            throw new \Exception('A view has to be provided in order to use relative asset paths'); 
+        }
+            
+        $assets = array_map(function($relPath) use ($dirname) {
+            return $dirname. Str::start($relPath,'/');         
+        },$this->assets);  
+        
+        return array_merge($this->absoluteAssetPaths,$assets); 
+        
     }
 
     /**

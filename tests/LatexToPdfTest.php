@@ -29,7 +29,7 @@ class LatexToPdfTest extends TestCase
         $compiler->method('compile')->willReturn(new File(__FILE__)); 
         
         $latex = new LatexToPdf($this->app->make('config'),$compiler, $dir);  
-        $latex->view('someview')->with(['variable' => 'test'])->assets($assets)->get();
+        $latex->view('someview')->with(['variable' => 'test'])->assets($assets, true)->get();
         
     }
     
@@ -51,6 +51,29 @@ class LatexToPdfTest extends TestCase
         $latex->runs(3)->get();
 
     }
+    
+    /** @test */
+    public function it_handles_relative_view_paths()
+    {
+        Storage::fake();
+
+        $viewPath = config('view.paths')[0];
+        
+        $assets = ['/some_image.jpg'];
+        $assetPaths = [ $viewPath .'/LatexToPdf/some_image.jpg']; 
+        
+        $dir = $this->createMock(TemporaryDirectory::class);
+        $dir->expects($this->once())->method('view')->with($this->equalTo('LatexToPdf.entry'))->willReturn($this->returnSelf());
+        $dir->method('with')->willReturn($this->returnSelf());
+        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assetPaths))->willReturn($this->returnSelf());
+        $dir->method('create')->willReturn($this->returnSelf());
+        $dir->method('getEntryFile')->willReturn(new File(__FILE__));
+        $compiler = $this->createMock(LatexCompiler::class);
+        $compiler->method('compile')->willReturn(new File(__FILE__));
+        $latex = new LatexToPdf($this->app->make('config'),$compiler, $dir);
+        $latex->view('LatexToPdf.entry')->assets($assets)->get();
+    }
+    
     
     
 }
