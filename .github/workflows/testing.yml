@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Update composer
-        run: composer self-update
+        run: sudo composer self-update
       
       - name: Composer update
         run: composer update --no-interaction --prefer-dist
