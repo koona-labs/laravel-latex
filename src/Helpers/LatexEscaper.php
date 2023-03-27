@@ -25,6 +25,7 @@ class LatexEscaper
         $string = str_replace("~","\\textasciitilde{}",$string);
         $string = str_replace("^","\\textasciicircum{}",$string); 
         $string = str_replace("\\textbackslash","\\textbackslash{}",$string);         
+        $string = preg_replace('/[\x{202a}-\x{202f}]/u','',$string); 
         
         return $string; 
         
