@@ -67,7 +67,7 @@ class AssetBuilder
     public function view(string $view)
     {
         try {
-            $this->viewPath = app('view.finder')->find($view);
+            $this->viewPath = view()->getFinder()->find($view);
             return $this;
         }
         catch (\Exception $e) {

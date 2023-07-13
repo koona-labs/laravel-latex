@@ -196,7 +196,7 @@ class TemporaryDirectory
 
     protected function copyViewFolder()
     {
-        $this->filesystem->copyDirectory(dirname(app('view.finder')->find($this->view)), $this->path);
+        $this->filesystem->copyDirectory(dirname(view()->getFinder()->find($this->view)), $this->path);
     }
 
     protected function compileAssetsViews()

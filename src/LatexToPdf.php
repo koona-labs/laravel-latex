@@ -173,7 +173,7 @@ class LatexToPdf
             return $this->absoluteAssetPaths; 
         }
         
-        $dirname = dirname(app('view.finder')->find($this->view)); 
+        $dirname = dirname(view()->getFinder()->find($this->view)); 
         
         if(!$dirname) {
             throw new \Exception('A view has to be provided in order to use relative asset paths'); 
