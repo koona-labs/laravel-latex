@@ -16,17 +16,17 @@
     "authors": [
         {
             "name": "Aaron Kunert",
-            "email": "aaron.kunert@abiturma.de"
+            "email": "aaron.kunert@koona-labs.de"
         }
     ],
     "minimum-stability": "stable",
     "require": {
         "php": "^8.0",
-        "illuminate/config": "^8.0|^9.0|^10.0",
-        "illuminate/support": "^8.0|^9.0|^10.0",
-        "illuminate/view": "^8.0|^9.0|^10.0",
-        "illuminate/filesystem": "^8.0|^9.0|^10.0",
-        "illuminate/console": "^8.0|^9.0|^10.0",
+        "illuminate/config": "^8.0|^9.0|^10.0|^11.0",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+        "illuminate/view": "^8.0|^9.0|^10.0|^11.0",
+        "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0",
+        "illuminate/console": "^8.0|^9.0|^10.0|^11.0",
         "titasgailius/terminal": "^1.1"
     },
     "require-dev": {
