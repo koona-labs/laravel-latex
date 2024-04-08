@@ -4,6 +4,9 @@ on:
     branches:
       - master
 
+env:
+  XDEBUG_MODE: coverage
+
 jobs: 
   testing: 
     runs-on: ubuntu-22.04
@@ -19,7 +22,7 @@ jobs:
         run: composer update --no-interaction --prefer-dist
         
       - name: Run tests
-        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+        run:  vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
          
 
 
