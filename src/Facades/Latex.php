@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Facade;
  */
 class Latex extends Facade
 {
-    /**
-     * @return string
-     */
-    public static function getFacadeAccessor()
+    public static function getFacadeAccessor() : string 
     {
         return "\Abiturma\LaravelLatex\LatexToPdf"; 
     }

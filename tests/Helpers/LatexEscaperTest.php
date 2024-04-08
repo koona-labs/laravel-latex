@@ -5,12 +5,13 @@ namespace Abiturma\LaravelLatex\Tests\Helpers;
 
 use Abiturma\LaravelLatex\Helpers\LatexEscaper;
 use Abiturma\LaravelLatex\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class LatexEscaperTest extends TestCase
 {
     
     
-    /** @test */
+    #[Test]
     public function it_escapes_simple_characters()
     {
         
@@ -28,7 +29,7 @@ class LatexEscaperTest extends TestCase
         
     }
     
-    /** @test */
+    #[Test]
     public function it_escapes_nasty_combinations_correctly()
     {
         $subject = 'Here a {Test\\that contains ~every#hing}'; 

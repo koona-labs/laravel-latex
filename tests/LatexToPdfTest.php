@@ -8,10 +8,11 @@ use Abiturma\LaravelLatex\Helpers\TemporaryDirectory;
 use Abiturma\LaravelLatex\LatexToPdf;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
 
 class LatexToPdfTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_passes_view_and_data_to_the_latex_directory()
     {
         Storage::fake(); 
@@ -19,10 +20,10 @@ class LatexToPdfTest extends TestCase
         $assets = ['path/to/asset']; 
         
         $dir = $this->createMock(TemporaryDirectory::class); 
-        $dir->expects($this->once())->method('view')->with($this->equalTo('someview'))->willReturn($this->returnSelf()); 
-        $dir->expects($this->once())->method('with')->with($this->equalTo(['variable' => 'test']))->willReturn($this->returnSelf()); 
-        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assets))->willReturn($this->returnSelf()); 
-        $dir->method('create')->willReturn($this->returnSelf()); 
+        $dir->expects($this->once())->method('view')->with($this->equalTo('someview'))->willReturnSelf(); 
+        $dir->expects($this->once())->method('with')->with($this->equalTo(['variable' => 'test']))->willReturnSelf(); 
+        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assets))->willReturnSelf(); 
+        $dir->method('create')->willReturnSelf(); 
         $dir->method('getEntryFile')->willReturn(new File(__FILE__));
         
         $compiler = $this->createMock(LatexCompiler::class); 
@@ -33,16 +34,16 @@ class LatexToPdfTest extends TestCase
         
     }
     
-    /** @test */
+    #[Test]
     public function it_runs_the_compiler_a_spefic_amount_of_times()
     {
         Storage::fake();
 
         $dir = $this->createMock(TemporaryDirectory::class);
-        $dir->method('view')->willReturn($this->returnSelf());
-        $dir->method('with')->willReturn($this->returnSelf());
-        $dir->method('withAssets')->willReturn($this->returnSelf());
-        $dir->method('create')->willReturn($this->returnSelf());
+        $dir->method('view')->willReturnSelf();
+        $dir->method('with')->willReturnSelf();
+        $dir->method('withAssets')->willReturnSelf();
+        $dir->method('create')->willReturnSelf();
         $dir->method('getEntryFile')->willReturn(new File(__FILE__));
         $compiler = $this->createMock(LatexCompiler::class);
         $compiler->expects($this->exactly(3))->method('compile')->willReturn(new File(__FILE__));
@@ -52,7 +53,7 @@ class LatexToPdfTest extends TestCase
 
     }
     
-    /** @test */
+    #[Test]
     public function it_handles_relative_view_paths()
     {
         Storage::fake();
@@ -63,10 +64,10 @@ class LatexToPdfTest extends TestCase
         $assetPaths = [ $viewPath .'/LatexToPdf/some_image.jpg']; 
         
         $dir = $this->createMock(TemporaryDirectory::class);
-        $dir->expects($this->once())->method('view')->with($this->equalTo('LatexToPdf.entry'))->willReturn($this->returnSelf());
-        $dir->method('with')->willReturn($this->returnSelf());
-        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assetPaths))->willReturn($this->returnSelf());
-        $dir->method('create')->willReturn($this->returnSelf());
+        $dir->expects($this->once())->method('view')->with($this->equalTo('LatexToPdf.entry'))->willReturnSelf();
+        $dir->method('with')->willReturnSelf();
+        $dir->expects($this->once())->method('withAssets')->with($this->equalTo($assetPaths))->willReturnSelf();
+        $dir->method('create')->willReturnSelf();
         $dir->method('getEntryFile')->willReturn(new File(__FILE__));
         $compiler = $this->createMock(LatexCompiler::class);
         $compiler->method('compile')->willReturn(new File(__FILE__));

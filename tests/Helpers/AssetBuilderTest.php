@@ -6,6 +6,7 @@ use Abiturma\LaravelLatex\Helpers\AssetBuilder;
 use Abiturma\LaravelLatex\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 
 class AssetBuilderTest extends TestCase
 {
@@ -19,35 +20,35 @@ class AssetBuilderTest extends TestCase
             
     }
     
-    /** @test */
+    #[Test]
     public function it_parses_simple_relative_assets()
     {
         $allAssets = $this->builder->assets(['some_image.jpg'])->get();
         $this->assertEquals($this->paths('AssetBuilder/some_image.jpg'),$allAssets); 
     }
     
-    /** @test */
+    #[Test]
     public function it_parses_relative_assets_using_glob_patterns()
     {
         $allAssets = $this->builder->assets(['*.jpg'])->get();
         $this->assertEquals($this->paths(['AssetBuilder/some_image.jpg','AssetBuilder/some_other_image.jpg']),$allAssets);
     }
     
-    /** @test */
+    #[Test]
     public function the_entry_file_is_never_an_asset()
     {
         $allAssets = $this->builder->assets(['*'])->get(); 
         $this->assertNotContains($this->paths(['AssetBuilder/entry.blade.php']),$allAssets);
     }
     
-    /** @test */
+    #[Test]
     public function it_parses_blacklisting()
     {
         $allAssets = $this->builder->assets(['*'])->excludedAssets(['*other*.*'])->get();
         $this->assertEquals($this->paths(['AssetBuilder/some_image.jpg','AssetBuilder/some_text.txt']),$allAssets); 
     }
     
-    /** @test */
+    #[Test]
     public function duplicates_are_removed()
     {
         $allAssets = $this->builder->assets(['*.txt','*.txt'])->get();

@@ -14,35 +14,18 @@ class GcCommand extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
+     * @var string 
      */
     protected $signature = 'latex:gc {--output}';
 
     /**
      * The console command description.
-     *
      * @var string
      */
     protected $description = 'Deletes all temporary files {--output| deletes also all files in output directory}';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
-    /**
-     * Execute the console command.
-     *
-     * @param Filesystem $filesystem
-     * @return mixed
-     */
-    public function handle(Filesystem $filesystem)
+    public function handle(Filesystem $filesystem): void
     {
         $tempDirectory = config('latex.temp_directory');
         $filesystem->deleteDirectory($tempDirectory); 

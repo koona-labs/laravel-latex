@@ -5,6 +5,7 @@ namespace Abiturma\LaravelLatex;
 
 use Abiturma\LaravelLatex\Helpers\LatexCompiler;
 use Abiturma\LaravelLatex\Helpers\TemporaryDirectory;
+use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
@@ -17,37 +18,22 @@ use Illuminate\Support\Str;
 class LatexToPdf
 {
 
-    /**
-     * @var Repository
-     */
-    protected $config;
-    /**
-     * @var LatexCompiler
-     */
-    protected $compiler;
+    protected Repository $config;
+    protected LatexCompiler $compiler;
 
-    protected $view = '';
+    protected string $view = '';
 
-    protected $data = [];
-    
-    protected $assets = []; 
-    
-    protected $absoluteAssetPaths = []; 
-    
-    protected $includeViewFolder = false;
+    protected array $data = [];
 
-    protected $runs = 1;
-    /**
-     * @var TemporaryDirectory
-     */
-    protected $temporaryDirectory;
+    protected array $assets = [];
 
-    /**
-     * LatexToPdf constructor.
-     * @param Repository $config
-     * @param LatexCompiler $compiler
-     * @param TemporaryDirectory $temporaryDirectory
-     */
+    protected array $absoluteAssetPaths = [];
+
+    protected bool $includeViewFolder = false;
+
+    protected int $runs = 1;
+    protected TemporaryDirectory $temporaryDirectory;
+
     public function __construct(Repository $config, LatexCompiler $compiler, TemporaryDirectory $temporaryDirectory)
     {
         $this->config = $config;
@@ -56,13 +42,9 @@ class LatexToPdf
     }
 
     /**
-     * 
      * set the view to be compiled
-     * 
-     * @param $view
-     * @return $this
      */
-    public function view($view)
+    public function view($view): static
     {
         $this->view = $view;
         return $this;
@@ -70,38 +52,30 @@ class LatexToPdf
 
     /**
      * provide data for the view
-     * 
-     * @param array $data
-     * @return $this
      */
-    public function with(array $data = [])
+    public function with(array $data = []): static
     {
-        $this->data = $data; 
-        return $this; 
+        $this->data = $data;
+        return $this;
     }
 
-    /**
+    /*
      * Add assets to the compiler
-     * 
-     * @param array $assets
-     * @return $this
      */
-    public function assets(array $assets = [], bool $absolutePath = false)
+    public function assets(array $assets = [], bool $absolutePath = false): static
     {
-        if($absolutePath) {
-            $this->absoluteAssetPaths = $assets; 
-            return $this; 
+        if ($absolutePath) {
+            $this->absoluteAssetPaths = $assets;
+            return $this;
         }
-        $this->assets = $assets; 
-        return $this; 
+        $this->assets = $assets;
+        return $this;
     }
 
     /**
      * specify if the ambient folder of the view should be copied to the compilation directory
-     * 
-     * @return $this
      */
-    public function includeViewFolder()
+    public function includeViewFolder(): static
     {
         $this->includeViewFolder = true;
         return $this;
@@ -109,11 +83,8 @@ class LatexToPdf
 
     /**
      * specify how many times the compiler should run
-     * 
-     * @param $number
-     * @return $this
      */
-    public function runs($number)
+    public function runs(int $number): static
     {
         //the number of runs is between 1 and 10
         $this->runs = Min(10, Max(1, (int)$number));
@@ -122,35 +93,30 @@ class LatexToPdf
 
     /**
      * after view, data, etc is specified compile the .tex file and get the path of the resulting pdf relative to the disk's root
-     * 
-     * @return string
+     *
      * @throws Exceptions\CompilationFailedException
      */
-    public function get()
+    public function get(): string
     {
         $dir = $this->buildTemporaryDirectory();
         for ($k = 1; $k <= $this->runs; $k++) {
             $pdf = $this->compile($dir->getEntryFile());
         }
         $result = $this->getOutput($pdf);
-        $dir->destroy(); 
-        return $result; 
+        $dir->destroy();
+        return $result;
     }
 
 
-    /**
-     * @param Texable $texable
-     * @return string
-     */
-    public function make(Texable $texable)
+    public function make(Texable $texable): string
     {
-        return $texable->make($this);             
+        return $texable->make($this);
     }
 
     /**
-     * @return TemporaryDirectory
+     * @throws Exception
      */
-    protected function buildTemporaryDirectory()
+    protected function buildTemporaryDirectory(): TemporaryDirectory
     {
         return tap($this->temporaryDirectory, function ($dir) {
             if ($this->includeViewFolder) {
@@ -160,51 +126,44 @@ class LatexToPdf
             ->view($this->view)
             ->with($this->data)
             ->withAssets($this->buildAssets())
-            ->create(); 
+            ->create();
     }
 
     /**
-     * @return array|string[]
      * @throws \Exception
      */
-    protected function buildAssets()
+    protected function buildAssets(): array|string
     {
-        if(!$this->assets) {
-            return $this->absoluteAssetPaths; 
+        if (!$this->assets) {
+            return $this->absoluteAssetPaths;
         }
-        
-        $dirname = dirname(view()->getFinder()->find($this->view)); 
-        
-        if(!$dirname) {
-            throw new \Exception('A view has to be provided in order to use relative asset paths'); 
+
+        $dirname = dirname(view()->getFinder()->find($this->view));
+
+        if (!$dirname) {
+            throw new \Exception('A view has to be provided in order to use relative asset paths');
         }
-            
-        $assets = array_map(function($relPath) use ($dirname) {
-            return $dirname. Str::start($relPath,'/');         
-        },$this->assets);  
-        
-        return array_merge($this->absoluteAssetPaths,$assets); 
-        
+
+        $assets = array_map(function ($relPath) use ($dirname) {
+            return $dirname . Str::start($relPath, '/');
+        }, $this->assets);
+
+        return array_merge($this->absoluteAssetPaths, $assets);
+
+    }
+
+    protected function getOutput(File $file): string|bool
+    {
+        $storage = Storage::disk($this->config->get('latex.output.disk'));
+        return $storage->putFile($this->config->get('latex.output.path'), $file);
     }
 
     /**
-     * @param File $file
-     * @return mixed
-     */
-    protected function getOutput(File $file)
-    {
-        $storage = Storage::disk($this->config->get('latex.output.disk')); 
-        return $storage->putFile($this->config->get('latex.output.path'),$file);
-    }
-
-    /**
-     * @param $file
-     * @return File
      * @throws Exceptions\CompilationFailedException
      */
-    protected function compile($file)
+    protected function compile($file): File
     {
-        return $this->compiler->compile($file); 
+        return $this->compiler->compile($file);
     }
 
 

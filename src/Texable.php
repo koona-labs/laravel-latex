@@ -15,87 +15,55 @@ use ReflectionProperty;
 class Texable
 {
 
-    /**
-     * @var int
-     */
-    public $runs = 1;
+    public int $runs = 1;
+
+    public string $view = '';
 
     /**
-     * @var string
-     */
-    public $view = '';
-
-    /**
-     * @var array
      * Array of asset paths, relative to view entry
      * Glob patterns are supported
      */
-    public $assets = [];
+    public array $assets = [];
 
-    /**
-     * @var array
-     */
-    public $absoluteAssetPaths = [];
+    public array $absoluteAssetPaths = [];
 
-    /**
-     * @var array
-     */
-    public $viewData = [];
+    public array $viewData = [];
 
 
     /**
-     * @var array
      * Exclusion takes precedence over asset abd  absoluteAssetPaths property
      */
-    public $excludedAbsoluteAssetPaths = [];
+    public array $excludedAbsoluteAssetPaths = [];
 
 
     /**
-     * @var array
      * Array of asset paths, relative to view entry that should be removed from the asset list
      * Glob patterns are supported
      * Exclusion takes precedence over asset abd  absoluteAssetPaths property
      */
-    public $excludedAssets = [];
+    public array $excludedAssets = [];
 
 
-    /**
-     * @param $runs
-     * @return $this
-     */
-    public function runs($runs)
+    public function runs(int $runs): static
     {
         $this->runs = $runs;
         return $this;
     }
 
-    /**
-     * @param $view
-     * @return $this
-     */
-    public function view($view)
+    public function view($view): static
     {
         $this->view = $view;
         return $this;
     }
 
 
-    /**
-     * @param array $with
-     * @return $this
-     */
-    public function with(array $with = [])
+    public function with(array $with = []): static
     {
         $this->viewData = $with;
         return $this;
     }
 
-    /**
-     * @param array|string $assets
-     * @param bool $absolutePath
-     * @return $this
-     */
-    public function assets(array|string $assets = [], bool $absolutePath = false)
+    public function assets(array|string $assets = [], bool $absolutePath = false): static
     {
         $assets = Arr::wrap($assets);
         if ($absolutePath) {
@@ -107,12 +75,7 @@ class Texable
     }
 
 
-    /**
-     * @param array|string $asset
-     * @param bool $absolutePath
-     * @return $this
-     */
-    public function addAsset(array|string $asset, $absolutePath = false)
+    public function addAsset(array|string $asset, bool $absolutePath = false): static
     {
         $asset = Arr::wrap($asset);
         if ($absolutePath) {
@@ -125,12 +88,7 @@ class Texable
     }
 
 
-    /**
-     * @param $asset
-     * @param $absolutePath
-     * @return $this
-     */
-    public function excludeAsset($asset, $absolutePath = false)
+    public function excludeAsset($asset, bool $absolutePath = false): static 
     {
         $asset = Arr::wrap($asset);
         if ($absolutePath) {
@@ -142,11 +100,7 @@ class Texable
         return $this;
     }
 
-    /**
-     * @return array
-     * @throws \ReflectionException
-     */
-    protected function buildViewData()
+    protected function buildViewData(): array
     {
         $data = $this->viewData;
 
@@ -159,29 +113,20 @@ class Texable
         return $data;
     }
 
-    /**
-     * @return $this
-     */
-    public function build()
+    public function build(): static 
     {
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function includeViewFolder()
+    public function includeViewFolder(): static 
     {
         return $this->addAsset('*');
     }
 
     /**
-     * @param LatexToPdf $compiler
-     * @return string
      * @throws Exceptions\CompilationFailedException
-     * @throws \ReflectionException
      */
-    public function make(LatexToPdf $compiler)
+    public function make(LatexToPdf $compiler): string 
     {
         $this->build();
 
@@ -190,7 +135,7 @@ class Texable
             ->absoluteAssetPaths($this->absoluteAssetPaths)
             ->excludedAssets($this->excludedAssets)
             ->excludedAbsoluteAssetsPaths($this->excludedAbsoluteAssetPaths)
-            ->view($this->view); 
+            ->view($this->view);
 
         return $compiler
             ->runs($this->runs)
@@ -199,8 +144,6 @@ class Texable
             ->with($this->buildViewData())
             ->get();
     }
-
-
 
 
 }

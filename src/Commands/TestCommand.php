@@ -21,10 +21,7 @@ class TestCommand extends Command
     protected $signature = 'latex:test';
 
 
-    /**
-     * @var Factory
-     */
-    protected $view;
+    protected Factory $view;
 
     /**
      * The console command description.
@@ -44,12 +41,7 @@ class TestCommand extends Command
         $this->view = $view;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function handle() :void
     {
         //both adaption are necessary since the view finder is instantiated two times
         $location = __DIR__.'/../resources/views';

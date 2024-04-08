@@ -5,6 +5,7 @@ namespace Abiturma\LaravelLatex\Tests\Commands;
 
 use Abiturma\LaravelLatex\Helpers\TemporaryDirectory;
 use Abiturma\LaravelLatex\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class GcCommandTest extends TestCase
 {
@@ -16,7 +17,7 @@ class GcCommandTest extends TestCase
         config()->set('latex.temp_directory', __DIR__. '../resources/temp');  
     }
 
-    /** @test */
+    #[Test]
     public function it_deletes_all_temporary_files()
     {
         
@@ -26,7 +27,7 @@ class GcCommandTest extends TestCase
         $this->assertFalse(file_exists($tempPath));
     }
 
-    /** @test */
+    #[Test]
     public function it_prompts_the_user_before_output_files_are_deleted()
     {
         $this->artisan('latex:gc --output')

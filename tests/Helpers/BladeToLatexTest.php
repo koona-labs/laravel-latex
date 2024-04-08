@@ -4,11 +4,12 @@ namespace Abiturma\LaravelLatex\Tests\Helpers;
 
 use Abiturma\LaravelLatex\Helpers\BladeToLatex;
 use Abiturma\LaravelLatex\Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class BladeToLatexTest extends TestCase
 {
     
-    /** @test */
+    #[Test]
     public function a_blade_view_is_compiled_to_a_string()
     {
         $variable = "This is a test"; 
@@ -17,7 +18,7 @@ class BladeToLatexTest extends TestCase
     }
     
     
-    /** @test */
+    #[Test]
     public function a_blade_file_is_compile_to_a_string()
     {
         $variable = "This is a test";

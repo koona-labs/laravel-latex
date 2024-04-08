@@ -3,6 +3,7 @@
 
 use Abiturma\LaravelLatex\Tests\TestCase;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 
 class TexableMakeCommandTest extends TestCase
 {
@@ -16,7 +17,7 @@ class TexableMakeCommandTest extends TestCase
             
     }
     
-    /** @test */
+    #[Test]
     public function it_generates_a_texable_file()
     {
         $this->assertFalse(File::exists(app_path('Latex/SomeTexableClass.php'))); 

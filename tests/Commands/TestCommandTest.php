@@ -6,11 +6,12 @@ namespace Abiturma\LaravelLatex\Tests\Commands;
 use Abiturma\LaravelLatex\Helpers\LatexCompiler;
 use Abiturma\LaravelLatex\Tests\TestCase;
 use Illuminate\Http\File;
+use PHPUnit\Framework\Attributes\Test;
 
 class TestCommandTest extends TestCase
 {
 
-    /** @test */
+    #[Test]
     public function it_produces_three_pdfs_as_output()
     {
         $this->mock(LatexCompiler::class, function ($mock) {

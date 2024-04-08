@@ -5,10 +5,11 @@ namespace Abiturma\LaravelLatex\Tests;
 
 use Abiturma\LaravelLatex\LatexToPdf;
 use Abiturma\LaravelLatex\Texable;
+use PHPUnit\Framework\Attributes\Test;
 
 class TexableTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_stores_the_view()
     {
         $texable = (new Texable());
@@ -16,7 +17,7 @@ class TexableTest extends TestCase
         $this->assertEquals('my_test_view', $texable->view);
     }
 
-    /** @test */
+    #[Test]
     public function it_stores_the_number_of_runs()
     {
         $texable = (new Texable());
@@ -24,7 +25,7 @@ class TexableTest extends TestCase
         $this->assertEquals(5, $texable->runs);
     }
 
-    /** @test */
+    #[Test]
     public function it_stores_data()
     {
         $texable = (new Texable());
@@ -34,7 +35,7 @@ class TexableTest extends TestCase
     }
 
 
-    /** @test */
+    #[Test]
     public function it_stores_assets()
     {
         $texable = (new Texable());
@@ -44,7 +45,7 @@ class TexableTest extends TestCase
     }
     
     
-    /** @test */
+    #[Test]
     public function it_stores_absolute_asset_paths()
     {
         $texable = (new Texable());
@@ -54,7 +55,7 @@ class TexableTest extends TestCase
     }
 
 
-    /** @test */
+    #[Test]
     public function it_adds_a_single_asset()
     {
         $texable = new Texable();
@@ -63,7 +64,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','new_asset'],$texable->assets);
     }
 
-    /** @test */
+    #[Test]
     public function it_adds_multiple_assets()
     {
         $texable = new Texable();
@@ -73,7 +74,7 @@ class TexableTest extends TestCase
     }
     
     
-    /** @test */
+    #[Test]
     public function it_adds_the_absolute_path_of_a_single_asset()
     {
         $texable = new Texable();
@@ -83,7 +84,7 @@ class TexableTest extends TestCase
         
     }
     
-    /** @test */
+    #[Test]
     public function it_adds_the_absolute_path_of_multiple_assets()
     {
         $texable = new Texable();
@@ -92,7 +93,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->absoluteAssetPaths);
     }
     
-    /** @test */
+    #[Test]
     public function it_exludes_a_single_asset()
     {
         $texable = new Texable();
@@ -101,7 +102,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','new_asset'],$texable->excludedAssets);
     }
     
-    /** @test */
+    #[Test]
     public function it_excludes_multiple_assets()
     {
         $texable = new Texable();
@@ -110,7 +111,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->excludedAssets);
     }
     
-    /** @test */
+    #[Test]
     public function it_excludes_the_absolute_paths_of_a_single_asset()
     {
         $texable = new Texable();
@@ -119,7 +120,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','new_asset'],$texable->excludedAbsoluteAssetPaths);
     }
     
-    /** @test */
+    #[Test]
     public function it_excludes_the_absolute_path_of_multiple_assets()
     {
         $texable = new Texable();
@@ -128,7 +129,7 @@ class TexableTest extends TestCase
         $this->assertEquals(['some','assets','asset_1','asset_2'],$texable->excludedAbsoluteAssetPaths);
     }
     
-    /** @test */
+    #[Test]
     public function it_allows_to_include_the_view_folder()
     {
        $texable = (new Texable())->includeViewFolder(); 

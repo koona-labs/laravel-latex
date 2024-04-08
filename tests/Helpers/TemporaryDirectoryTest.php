@@ -6,6 +6,7 @@ namespace Abiturma\LaravelLatex\Tests\Helpers;
 use Abiturma\LaravelLatex\Helpers\TemporaryDirectory;
 use Abiturma\LaravelLatex\Tests\TestCase;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 
 class TemporaryDirectoryTest extends TestCase
 {
@@ -16,14 +17,14 @@ class TemporaryDirectoryTest extends TestCase
     }
 
 
-    /** @test */
+    #[Test]
     public function it_creates_an_entry_file()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'my_test'])->create();
         $this->assertInstanceOf('Illuminate\Http\File', $dir->getEntryFile());
     }
     
-    /** @test */
+    #[Test]
     public function it_creates_a_nested_temporary_directory()
     {
         $temp = config('latex.temp_directory'); 
@@ -33,7 +34,7 @@ class TemporaryDirectoryTest extends TestCase
     }
     
 
-    /** @test */
+    #[Test]
     public function it_copies_the_viewfolder_if_advised_to()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'my_test'])->includeViewFolder()->create()->getPath();
@@ -43,7 +44,7 @@ class TemporaryDirectoryTest extends TestCase
         
     }
     
-    /** @test */
+    #[Test]
     public function it_copies_specified_asset_files()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')
@@ -55,7 +56,7 @@ class TemporaryDirectoryTest extends TestCase
         $this->assertTrue($files->contains('asset.sty'));
     }
     
-    /** @test */
+    #[Test]
     public function it_copies_specified_asset_directories()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')
@@ -68,7 +69,7 @@ class TemporaryDirectoryTest extends TestCase
     }
     
     
-    /** @test */
+    #[Test]
     public function it_compiles_all_blade_files_in_the_directory_if_necessary()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')->with(['variable' => 'myAssetTest'])->includeViewFolder()->create()->getPath();
@@ -79,7 +80,7 @@ class TemporaryDirectoryTest extends TestCase
         $this->assertStringContainsString('myAssetTest',File::get($asset));
     }
     
-    /** @test */
+    #[Test]
     public function it_compiles_additional_files_too()
     {
         $dir = $this->make()->view('TemporaryDirectory.entry')

@@ -13,37 +13,23 @@ use Illuminate\Http\File;
  */
 class TemporaryDirectory
 {
-    /**
-     * @var BladeToLatex
-     */
-    protected $bladeToLatex;
-    /**
-     * @var Repository
-     */
-    protected $config;
-
-    protected $path = null;
-
-    protected $view = '';
-
-    protected $data = [];
-
-    protected $includeViewFolder = false;
+    protected BladeToLatex $bladeToLatex;
     
-    protected $assets = []; 
-    
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    protected array $config;
+
+    protected ?string $path = null;
+
+    protected string $view = '';
+
+    protected array $data = [];
+
+    protected bool $includeViewFolder = false;
+
+    protected array $assets = [];
+
+    protected Filesystem $filesystem;
 
 
-    /**
-     * TemporaryDirectory constructor.
-     * @param BladeToLatex $bladeToLatex
-     * @param Filesystem $filesystem
-     * @param Repository $config
-     */
     public function __construct(BladeToLatex $bladeToLatex, Filesystem $filesystem, Repository $config)
     {
         $this->bladeToLatex = $bladeToLatex;
@@ -53,11 +39,8 @@ class TemporaryDirectory
 
     /**
      * sets the view to compile
-     * 
-     * @param $view
-     * @return $this
      */
-    public function view($view)
+    public function view($view): static
     {
         $this->view = $view;
         return $this;
@@ -66,11 +49,8 @@ class TemporaryDirectory
 
     /**
      * provides data for the view
-     * 
-     * @param $data
-     * @return $this
      */
-    public function with($data)
+    public function with(array $data): static
     {
         $this->data = $data;
         return $this;
@@ -78,31 +58,23 @@ class TemporaryDirectory
 
     /**
      * returns the entry file to start compilation with
-     * 
-     * @return File
      */
-    public function getEntryFile()
+    public function getEntryFile(): File
     {
         return new File($this->path . '/__main.tex');
     }
 
     /**
      * specifies if the ambient folder of the entry view should be copied to the temp directory
-     * 
-     * @return $this
      */
-    public function includeViewFolder()
+    public function includeViewFolder(): static
     {
         $this->includeViewFolder = true;
         return $this;
     }
 
 
-    /**
-     * @param array $assets
-     * @return $this
-     */
-    public function withAssets(array $assets = [])
+    public function withAssets(array $assets = []): static
     {
         $this->assets = $assets;
         return $this;
@@ -110,10 +82,8 @@ class TemporaryDirectory
 
     /**
      * creates a temporary directory
-     * 
-     * @return $this
      */
-    public function create()
+    public function create(): static
     {
         $this->destroy();
         $this->createDirectory();
@@ -124,20 +94,16 @@ class TemporaryDirectory
 
     /**
      * returns the path of the temporary directory
-     * 
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string 
     {
         return $this->path;
     }
 
     /**
      * destroys the temporary directory
-     * 
-     * @return $this
      */
-    public function destroy()
+    public function destroy(): static
     {
         if (is_null($this->path)) {
             return $this;
@@ -151,16 +117,16 @@ class TemporaryDirectory
     protected function createDirectory()
     {
         $this->path = $this->config['temp_directory'] . '/' . uniqid();
-        $this->createDirectoryRecursively($this->path); 
+        $this->createDirectoryRecursively($this->path);
     }
 
     protected function createDirectoryRecursively($path)
     {
-        $dir = dirname($path); 
-        if(!$this->filesystem->exists($dir)) {
-            $this->createDirectoryRecursively($dir); 
+        $dir = dirname($path);
+        if (!$this->filesystem->exists($dir)) {
+            $this->createDirectoryRecursively($dir);
         }
-        $this->filesystem->makeDirectory($path); 
+        $this->filesystem->makeDirectory($path);
     }
 
     protected function buildEntryFile()
@@ -174,23 +140,23 @@ class TemporaryDirectory
         if ($this->includeViewFolder) {
             $this->copyViewFolder();
         }
-        
-        foreach($this->assets as $asset) {
-            $this->copyAsset($asset); 
+
+        foreach ($this->assets as $asset) {
+            $this->copyAsset($asset);
         }
-        
+
         $this->compileAssetsViews();
     }
 
     protected function copyAsset($asset)
     {
-        if($this->filesystem->isDirectory($asset)) {
-            return $this->filesystem->copyDirectory($asset,$this->path); 
+        if ($this->filesystem->isDirectory($asset)) {
+            return $this->filesystem->copyDirectory($asset, $this->path);
         }
-        
-        if($this->filesystem->exists($asset)) {
-           $name = $this->filesystem->basename($asset); 
-           $this->filesystem->copy($asset, $this->path . '/' . $name);    
+
+        if ($this->filesystem->exists($asset)) {
+            $name = $this->filesystem->basename($asset);
+            $this->filesystem->copy($asset, $this->path . '/' . $name);
         }
     }
 
@@ -207,7 +173,7 @@ class TemporaryDirectory
         });
         foreach ($files as $file) {
             $filename = preg_replace('/\.blade\.php$/', '', $file->getFilename());
-            $content = $this->bladeToLatex->toStringFromPath($file->getRealPath(), $this->data); 
+            $content = $this->bladeToLatex->toStringFromPath($file->getRealPath(), $this->data);
             $this->filesystem->put($this->path . '/' . $filename, $content);
         }
     }
